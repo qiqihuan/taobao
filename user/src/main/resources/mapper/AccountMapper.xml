@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.user.account.mapper.AccountMapper">
+
+
+    <resultMap id="myMap" type="Account">
+        <id column="id" property="id"/>
+        <result column="login_name" property="loginName"/>
+        <result column="password" property="password"/>
+        <result column="nick_name" property="nickName"/>
+        <result column="age" property="age"/>
+        <result column="location" property="location"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="has_remove" property="hasRemove"/>
+        <collection property="roleIds" ofType="Integer">
+            <constructor>
+                <arg column="role_id"/>
+            </constructor>
+        </collection>
+    </resultMap>
+
+    <!-- 添加账户 -->
+    <insert id="addAccount" useGeneratedKeys="true" keyProperty="id">
+        insert into account
+            (login_name,password,gmt_create)
+        values
+            (#{loginName},#{password},#{gmtCreate})
+    </insert>
+
+    <!-- 添加账户和角色中间表数据 -->
+    <insert id="addAccountRoleCentre" parameterType="AccountRoleCentre">
+        insert into account_role
+            (account_id,role_id)
+        values
+        <foreach collection="roleIds" item="roleId" separator=",">
+            (#{accountId},#{roleId})
+        </foreach>
+    </insert>
+
+    <!-- 更新账户数据或状态 -->
+    <update id="updateAccount" parameterType="Account">
+        update account set
+        <if test="password != null and password != ''">
+            password = #{password},
+        </if>
+        <if test="nickName != null and nickName != ''">
+            nick_name = #{nickName},
+        </if>
+        <if test="age != null">
+            age = #{age},
+        </if>
+        <if test="location != null and location != ''">
+            location = #{location},
+        </if>
+        <if test="hasRemove">
+            has_remove = #{hasRemove},
+        </if>
+            gmt_modified = #{gmtModified}
+    </update>
+
+    <!-- 根据账户id删除账户和角色中中间表数据 -->
+    <delete id="deleteAccountRoleCentreByAccountId" parameterType="Integer">
+        delete from
+            account_role
+        where
+            account_id
+        in
+        <foreach collection="ids" open="(" item="id" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 查询账户列表 -->
+    <select id="selectAccountList" resultMap="myMap">
+        select
+            acc.id,acc.login_name,acc.password,acc.nick_name,acc.age,acc.location,acc.gmt_create,
+            acc.gmt_modified,acc.has_remove,acr.role_id
+        from
+            account acc
+        left join
+            account_role acr
+        on
+           acc.id = acr.account_id
+        where
+            has_remove = #{hasRemove}
+
+    </select>
+
+
+</mapper>
