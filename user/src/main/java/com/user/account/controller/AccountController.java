@@ -45,6 +45,7 @@ public class AccountController {
      */
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public ResultVO updateAccount(Account account){
+        System.out.println("修改账户中");
 
         return accService.updateAccount(account);
     }
