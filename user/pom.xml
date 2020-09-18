@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.pilot.taobao</groupId>
-    <artifactId>user-taobao</artifactId>
+    <artifactId>user-taobao </artifactId>
     <dependencies>
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
