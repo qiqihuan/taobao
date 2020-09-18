@@ -17,6 +17,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class startUser {
 
     public static void main(String[] args) {
+        System.out.println("启动类");
         SpringApplication.run(startUser.class);
     }
 }
